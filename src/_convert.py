@@ -3,8 +3,18 @@ Created on Jan 5, 2015
 
 @author: qurban.ali
 '''
-
+import operator
 import pymel.core as pc
+
+def getAttr(node, attribute):
+    attr = (0, 0, 0)
+    for i in range(200):
+        attr = tuple(operator.add(attr, pc.PyNode(str(node)+ '.'+ attribute).get()))
+        try:
+            node= node.firstParent()
+        except pc.MayaNodeError:
+            break
+    return attr
 
 def convert():
     try:
@@ -43,12 +53,11 @@ def convert():
             areaLight.aiColorTemperature.inputs(plugs=True)[0].connect(spotLight.aiColorTemperature)
         except IndexError:
             spotLight.aiColorTemperature.set(areaLight.aiColorTemperature.get())
-            
-        #spotTransform = spotLight.firstParent()
+
         areaTransform = areaLight.firstParent()
         
-        spotLight.translate.set(areaTransform.translate.get())
-        spotLight.rotate.set(areaTransform.rotate.get())
+        spotLight.translate.set(getAttr(areaTransform, 'translate'))
+        spotLight.rotate.set(getAttr(areaTransform, 'rotate'))
         
     for light in lights:
         pc.delete(light)
