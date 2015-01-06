@@ -5,10 +5,11 @@ Created on Jan 5, 2015
 '''
 import operator
 import pymel.core as pc
+import appUsageApp
 
 def getAttr(node, attribute):
     attr = (0, 0, 0)
-    for i in range(200):
+    for _ in range(200):
         attr = tuple(operator.add(attr, pc.PyNode(str(node)+ '.'+ attribute).get()))
         try:
             node= node.firstParent()
@@ -61,3 +62,5 @@ def convert():
         
     for light in lights:
         pc.delete(light)
+        
+    appUsageApp.updateDatabase('AiAreaToSpot')
